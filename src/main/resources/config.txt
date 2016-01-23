@@ -1,0 +1,5 @@
+jdbcUrl = jdbc:mysql://127.0.0.1:3306/dlbnew?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+user = root
+password = dlb1688
+
+devMode = true
