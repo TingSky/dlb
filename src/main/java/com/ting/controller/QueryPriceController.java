@@ -36,14 +36,14 @@ public class QueryPriceController extends Controller{
         if(q != null){
             long l = new Date().getTime() - 10*60*1000;
             if(q.getAddtime().after(new Date(l))){
-                renderJson(-1);
+                renderJson("amount",-1);
                 return;
             }
         }
 
         if(list != null){
             final long id = QueryPrice.dao.insert(catid, username);
-            renderJson(list.size()-1);
+            renderJson("amount",list.size()-1);
 
             Date now = new Date();
 
@@ -102,7 +102,7 @@ public class QueryPriceController extends Controller{
 
         Member.dao.auth(userId, username);
 
-        renderJson(Quotation.dao.update(id, price));
+        renderJson("isUpdate",Quotation.dao.update(id, price));
 
     }
 

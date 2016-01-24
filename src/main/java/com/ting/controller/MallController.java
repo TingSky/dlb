@@ -10,13 +10,14 @@ import com.ting.domain.Member;
 public class MallController extends Controller{
     public void isStock(){
 
-        final long userId = getParaToLong("userId");
-        final String username = getPara("username");
+//        final long userId = getParaToLong("userId");
+//        final String username = getPara("username");
         Integer catid = getParaToInt("catid");
         Integer areaid = getParaToInt("areaid", null);
 
-        Member.dao.auth(userId, username);
+//        Member.dao.auth(userId, username);
 
-        renderJson(Mall.dao.isStock(catid,areaid));
+
+        renderJson("isStock", Mall.dao.isStock(catid,areaid));
     }
 }
