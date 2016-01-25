@@ -1,15 +1,9 @@
 package com.ting.controller;
 
 import com.jfinal.core.Controller;
-import com.ting.domain.Mall;
+import com.jfinal.kit.JsonKit;
 import com.ting.domain.Member;
-import com.ting.domain.QueryPrice;
 import com.ting.domain.Quotation;
-
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * Created by tingsky on 16/1/13.
@@ -29,8 +23,8 @@ public class QuotationController extends Controller{
 
         Member.dao.auth(userId, username);
 
-        renderJson(Quotation.dao.listByBoss(username, type, pageNo, pageSize));
-
+//        renderJson(Quotation.dao.listByBoss(username, type, pageNo, pageSize));
+        r(Quotation.dao.listByBoss(username, type, pageNo, pageSize));
     }
 
     /**
@@ -45,8 +39,19 @@ public class QuotationController extends Controller{
 
         Member.dao.auth(userId, username);
 
-        renderJson(Quotation.dao.listByCustomer(username, type, pageNo, pageSize));
+//        renderJson(Quotation.dao.listByCustomer(username, type, pageNo, pageSize));
+        r(Quotation.dao.listByCustomer(username, type, pageNo, pageSize));
+    }
 
+
+    private void r(Object obj){
+        String callback = getPara("callback");
+        if(callback == null){
+            renderJson(obj);
+            return;
+        }
+        String text = JsonKit.toJson(obj);
+        renderJson(callback+"("+text+")");
     }
 
 }

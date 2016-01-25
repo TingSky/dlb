@@ -1,13 +1,17 @@
 package com.ting.controller;
 
 import com.jfinal.core.Controller;
+import com.jfinal.kit.JsonKit;
+import com.jfinal.plugin.activerecord.Page;
 import com.ting.domain.Mall;
 import com.ting.domain.Member;
 import com.ting.domain.QueryPrice;
 import com.ting.domain.Quotation;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -36,14 +40,21 @@ public class QueryPriceController extends Controller{
         if(q != null){
             long l = new Date().getTime() - 10*60*1000;
             if(q.getAddtime().after(new Date(l))){
-                renderJson("amount",-1);
+//                renderJson("amount",-1);
+                Map<String,Object> result = new HashMap<String,Object>();
+                result.put("amount",-1);
+                r(result);
                 return;
             }
         }
 
         if(list != null){
             final long id = QueryPrice.dao.insert(catid, username);
-            renderJson("amount",list.size()-1);
+//            renderJson("amount",(list.size()-1) + "");
+
+            Map<String,Object> result = new HashMap<String,Object>();
+            result.put("amount",list.size()-1);
+            r(result);
 
             Date now = new Date();
 
@@ -84,13 +95,15 @@ public class QueryPriceController extends Controller{
         Integer pageNo = getParaToInt("pageNo",1);
         Integer pageSize = getParaToInt("pageSize",10);
 
+
         Member.dao.auth(userId, username);
 
         QueryPrice vo = QueryPrice.dao.getLatestQuery(catid, username);
         if(vo == null){
-            renderJson(0);
+            r(0);
         }else{
-            renderJson(Quotation.dao.listQuotation(vo.getId(), type, pageNo, pageSize));
+            Page<Quotation> page = Quotation.dao.listQuotation(vo.getId(), type, pageNo, pageSize);
+            r(page);
         }
     }
 
@@ -102,8 +115,21 @@ public class QueryPriceController extends Controller{
 
         Member.dao.auth(userId, username);
 
-        renderJson("isUpdate",Quotation.dao.update(id, price));
+//        renderJson("isUpdate",Quotation.dao.update(id, price));
+//        r("{\"isUpdate\":"+Quotation.dao.update(id,price) + "}");
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("isUpdate",Quotation.dao.update(id, price));
+        r(result);
+    }
 
+    private void r(Object obj){
+        String callback = getPara("callback");
+        if(callback == null){
+            renderJson(obj);
+            return;
+        }
+        String text = JsonKit.toJson(obj);
+        renderJson(callback+"("+text+")");
     }
 
 }
