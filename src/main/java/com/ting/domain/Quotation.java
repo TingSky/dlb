@@ -47,14 +47,14 @@ public class Quotation extends BaseQuotation<Quotation> {
 
     }
 
-    public boolean update(long id, double price){
+    public Integer update(long id, double price){
         Quotation vo = dao.findById(id);
         if(vo.getStatus() == true){
-            return false;
+            return 0;
         }
         vo.setPrice(new BigDecimal(price));
         vo.setUpdatetime(new Date());
         vo.setStatus(true);
-        return vo.update();
+        return vo.update() ? 1 : 0;
     }
 }

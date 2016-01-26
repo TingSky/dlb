@@ -108,18 +108,24 @@ public class QueryPriceController extends Controller{
     }
 
     public void update(){
-        long userId = getParaToLong("userId");
-        String username = getPara("username");
-        long id = getParaToLong("id");
-        double price = Double.parseDouble(getPara("price"));
+        try {
+            long userId = getParaToLong("userId");
+            String username = getPara("username");
+            long id = getParaToLong("id");
+            double price = Double.parseDouble(getPara("price"));
 
-        Member.dao.auth(userId, username);
+            Member.dao.auth(userId, username);
 
-//        renderJson("isUpdate",Quotation.dao.update(id, price));
-//        r("{\"isUpdate\":"+Quotation.dao.update(id,price) + "}");
-        Map<String,Object> result = new HashMap<String,Object>();
-        result.put("isUpdate",Quotation.dao.update(id, price));
-        r(result);
+            //        renderJson("isUpdate",Quotation.dao.update(id, price));
+            //        r("{\"isUpdate\":"+Quotation.dao.update(id,price) + "}");
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("isUpdate", Quotation.dao.update(id, price));
+            r(result);
+        }catch (Exception e){
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("isUpdate", -1);
+            r(result);
+        }
     }
 
     private void r(Object obj){
