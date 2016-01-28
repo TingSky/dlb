@@ -21,29 +21,29 @@ public class Quotation extends BaseQuotation<Quotation> {
     public Page<Quotation> listQuotation(Long queryid, Integer status, Integer pageNo, Integer pageSize){
         if(status == null){
 //            return dao.find("select * from destoon_quotation where queryid=?", queryid);
-            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=?", queryid);
+            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? order by id desc", queryid);
         }
 //        return dao.find("select * from destoon_quotation where queryid=? and status=?", queryid, status);
-        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and status=?", queryid, status);
+        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and status=? order by id desc", queryid, status);
     }
 
     public Page<Quotation> listByBoss(String bossname, Integer status, Integer pageNo, Integer pageSize){
         if(status == null){
 //            return dao.find("select * from destoon_quotation where touser=?", bossname);
-            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=?", bossname);
+            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? order by id desc", bossname);
         }
 //        return dao.find("select * from destoon_quotation where touser=? and status=?", bossname, status);
-        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=?", bossname, status);
+        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=? order by id desc", bossname, status);
     }
 
     public Page<Quotation> listByCustomer(String custommerName, Integer status, Integer pageNo, Integer pageSize){
         if(status == null){
 //            return dao.find("select * from destoon_quotation where fromuser=?", custommerName);
-            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=?", custommerName);
+            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? order by id desc", custommerName);
 
         }
 //        return dao.find("select * from destoon_quotation where fromuser=? and status=?", custommerName, status);
-        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=?", custommerName, status);
+        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=? order by id desc", custommerName, status);
 
     }
 
