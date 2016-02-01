@@ -12,14 +12,14 @@ public class Mall extends BaseMall<Mall> {
 	public static final Mall dao = new Mall();
 
     public List<Mall> getStockGoodsByCatid(Integer catid){
-        return dao.find("select * from destoon_mall where amount>sales and status=3 and catid = ?", catid);
+        return dao.find("select * from destoon_mall where amount>sales and status=3 and catid = ? and username!='dlbdlb'", catid);
     }
 
     public boolean isStock(Integer catid, Integer areaid){
         if(areaid == null){
             return getStockGoodsByCatid(catid).size() > 0;
         }else {
-            return dao.find("select * from destoon_mall where amount>sales and status=3 and catid = ? and areaid = ?", catid , areaid).size() > 0;
+            return dao.find("select * from destoon_mall where amount>sales and status=3 and catid = ? and areaid = ? and username!='dlbdlb'", catid , areaid).size() > 0;
         }
     }
 

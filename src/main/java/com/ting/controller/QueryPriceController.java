@@ -60,9 +60,6 @@ public class QueryPriceController extends Controller{
 
             executor.execute(() -> {
                 for (Mall m : list){
-                    if(m.getUsername().equals("dlbdlb")){
-                        continue;
-                    }
                     Quotation vo = new Quotation();
                     vo.setAddtime(now);
                     vo.setUpdatetime(null);
@@ -72,7 +69,7 @@ public class QueryPriceController extends Controller{
                     vo.setItemid(m.getItemid().longValue());
                     vo.setPrice(null);
                     vo.setQueryid(id);
-                    vo.setStatus(false);
+                    vo.setStatus(0);
                     vo.setTax(tax);
                     vo.setTitle(m.getTitle());
                     vo.setToid(Member.dao.findByUsername(m.getUsername()).getUserid().longValue());

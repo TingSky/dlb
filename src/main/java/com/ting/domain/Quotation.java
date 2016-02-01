@@ -1,9 +1,11 @@
 package com.ting.domain;
 
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.ting.domain.base.BaseQuotation;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,33 +30,52 @@ public class Quotation extends BaseQuotation<Quotation> {
     }
 
     public Page<Quotation> listByBoss(String bossname, Integer status, Integer pageNo, Integer pageSize){
+        Page<Quotation> page;
         if(status == null){
 //            return dao.find("select * from destoon_quotation where touser=?", bossname);
-            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? order by id desc", bossname);
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? order by id desc", bossname);
         }
 //        return dao.find("select * from destoon_quotation where touser=? and status=?", bossname, status);
-        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=? order by id desc", bossname, status);
+        page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=? order by id desc", bossname, status);
+
+        List<Quotation> list = new ArrayList<Quotation>();
+        page.getList().stream().filter(vo -> vo.getStatus() == 0).forEach(vo -> {
+            vo.setStatus(1);
+            list.add(vo);
+        });
+        return page;
     }
 
     public Page<Quotation> listByCustomer(String custommerName, Integer status, Integer pageNo, Integer pageSize){
+        Page<Quotation> page ;
         if(status == null){
 //            return dao.find("select * from destoon_quotation where fromuser=?", custommerName);
-            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? order by id desc", custommerName);
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? order by id desc", custommerName);
 
         }
 //        return dao.find("select * from destoon_quotation where fromuser=? and status=?", custommerName, status);
-        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=? order by id desc", custommerName, status);
+        page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=? order by id desc", custommerName, status);
 
+        List<Quotation> list = new ArrayList<Quotation>();
+        page.getList().stream().filter(vo -> vo.getStatus() == 2).forEach(vo -> {
+            vo.setStatus(3);
+            list.add(vo);
+        });
+        Db.batchUpdate(list,list.size());
+
+        return page;
     }
 
     public Integer update(long id, double price){
         Quotation vo = dao.findById(id);
-        if(vo.getStatus() == true){
+        if(vo.getStatus() != 0 && vo.getStatus() != 1){
             return 0;
         }
         vo.setPrice(new BigDecimal(price));
         vo.setUpdatetime(new Date());
-        vo.setStatus(true);
+        vo.setStatus(1);
         return vo.update() ? 1 : 0;
     }
+
+
 }

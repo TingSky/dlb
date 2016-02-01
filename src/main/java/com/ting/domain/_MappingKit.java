@@ -16,14 +16,9 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 public class _MappingKit {
 
 	public static void mapping(ActiveRecordPlugin arp) {
-//		arp.addMapping("destoon_article_data_21", "itemid", ArticleData21.class);
-//		arp.addMapping("destoon_category_option", "oid", CategoryOption.class);
-//		arp.addMapping("destoon_company", "userid", Company.class);
-//		arp.addMapping("destoon_company_setting", "", CompanySetting.class);
-//		arp.addMapping("destoon_finance_deposit", "itemid", FinanceDeposit.class);
+		arp.addMapping("destoon_company", "userid", Company.class);
 		arp.addMapping("destoon_mall", "itemid", Mall.class);
 		arp.addMapping("destoon_member", "userid", Member.class);
-//		arp.addMapping("destoon_message", "itemid", Message.class);
 		arp.addMapping("destoon_query_price", "id", QueryPrice.class);
 		arp.addMapping("destoon_quotation", "id", Quotation.class);
 	}

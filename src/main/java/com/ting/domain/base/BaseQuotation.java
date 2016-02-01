@@ -89,11 +89,11 @@ public abstract class BaseQuotation<M extends BaseQuotation<M>> extends Model<M>
 		return get("price");
 	}
 
-	public void setStatus(java.lang.Boolean status) {
+	public void setStatus(java.lang.Integer status) {
 		set("status", status);
 	}
 
-	public java.lang.Boolean getStatus() {
+	public java.lang.Integer getStatus() {
 		return get("status");
 	}
 
