@@ -16,45 +16,53 @@ import java.util.List;
 public class Quotation extends BaseQuotation<Quotation> {
 	public static final Quotation dao = new Quotation();
 
-    // type :
-    // 0 : 新询价,未读
-    // 1 : 已回复询价
+    // type (status):
+    // 0 : 新询价,商家未读
+    // 1 : 商家已读
+    // 2 : 商家报价,用户未读
+    // 3 : 用户已读
 
     public Page<Quotation> listQuotation(Long queryid, Integer status, Integer pageNo, Integer pageSize){
+        Page<Quotation> page;
         if(status == null){
-//            return dao.find("select * from destoon_quotation where queryid=?", queryid);
-            return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? order by id desc", queryid);
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? order by id desc", queryid);
+        }else{
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and status=? order by id desc", queryid, status);
         }
-//        return dao.find("select * from destoon_quotation where queryid=? and status=?", queryid, status);
-        return dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and status=? order by id desc", queryid, status);
+
+        List<Quotation> list = new ArrayList<Quotation>();
+        page.getList().stream().filter(vo -> vo.getStatus() == 2).forEach(vo -> {
+            vo.setStatus(3);
+            list.add(vo);
+        });
+        Db.batchUpdate(list,list.size());
+        return page;
     }
 
     public Page<Quotation> listByBoss(String bossname, Integer status, Integer pageNo, Integer pageSize){
         Page<Quotation> page;
         if(status == null){
-//            return dao.find("select * from destoon_quotation where touser=?", bossname);
             page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? order by id desc", bossname);
+        }else{
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=? order by id desc", bossname, status);
         }
-//        return dao.find("select * from destoon_quotation where touser=? and status=?", bossname, status);
-        page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=? order by id desc", bossname, status);
 
         List<Quotation> list = new ArrayList<Quotation>();
         page.getList().stream().filter(vo -> vo.getStatus() == 0).forEach(vo -> {
             vo.setStatus(1);
             list.add(vo);
         });
+        Db.batchUpdate(list,list.size());
         return page;
     }
 
     public Page<Quotation> listByCustomer(String custommerName, Integer status, Integer pageNo, Integer pageSize){
         Page<Quotation> page ;
         if(status == null){
-//            return dao.find("select * from destoon_quotation where fromuser=?", custommerName);
             page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? order by id desc", custommerName);
-
+        }else{
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=? order by id desc", custommerName, status);
         }
-//        return dao.find("select * from destoon_quotation where fromuser=? and status=?", custommerName, status);
-        page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=? order by id desc", custommerName, status);
 
         List<Quotation> list = new ArrayList<Quotation>();
         page.getList().stream().filter(vo -> vo.getStatus() == 2).forEach(vo -> {
@@ -73,7 +81,7 @@ public class Quotation extends BaseQuotation<Quotation> {
         }
         vo.setPrice(new BigDecimal(price));
         vo.setUpdatetime(new Date());
-        vo.setStatus(1);
+        vo.setStatus(2);
         return vo.update() ? 1 : 0;
     }
 

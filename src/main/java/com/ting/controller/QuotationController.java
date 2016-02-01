@@ -28,7 +28,6 @@ public class QuotationController extends Controller{
 
         Member.dao.auth(userId, username);
 
-//        renderJson(Quotation.dao.listByBoss(username, type, pageNo, pageSize));
         r(Quotation.dao.listByBoss(username, type, pageNo, pageSize));
     }
 
@@ -43,8 +42,6 @@ public class QuotationController extends Controller{
         Integer pageSize = getParaToInt("pageSize",10);
 
         Member.dao.auth(userId, username);
-
-//        renderJson(Quotation.dao.listByCustomer(username, type, pageNo, pageSize));
 
         Page<Quotation> page = Quotation.dao.listByCustomer(username, type, pageNo, pageSize);
         r(page);

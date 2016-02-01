@@ -113,8 +113,6 @@ public class QueryPriceController extends Controller{
 
             Member.dao.auth(userId, username);
 
-            //        renderJson("isUpdate",Quotation.dao.update(id, price));
-            //        r("{\"isUpdate\":"+Quotation.dao.update(id,price) + "}");
             Map<String, Object> result = new HashMap<String, Object>();
             result.put("isUpdate", Quotation.dao.update(id, price));
             r(result);
