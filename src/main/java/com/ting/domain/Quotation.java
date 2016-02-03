@@ -16,60 +16,51 @@ import java.util.List;
 public class Quotation extends BaseQuotation<Quotation> {
 	public static final Quotation dao = new Quotation();
 
-    // type (status):
+    // status:
     // 0 : 新询价,商家未读
     // 1 : 商家已读
     // 2 : 商家报价,用户未读
     // 3 : 用户已读
 
-    public Page<Quotation> listQuotation(Long queryid, Integer status, Integer pageNo, Integer pageSize){
+    public Page<Quotation> listQuotation(Long userId, Long queryid, Integer type, Integer pageNo, Integer pageSize){
+        Db.update("update destoon_quotation set status=-1 where fromid=? and addtime<date_sub(now(), interval 1 hour)",userId);
+        Db.update("update destoon_quotation set status=3 where fromid=? and status=2",userId);
         Page<Quotation> page;
-        if(status == null){
-            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? order by id desc", queryid);
+        if(type == null){
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? order by id", queryid);
+        }else if(type == 0){
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and price is null order by id", queryid);
         }else{
-            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and status=? order by id desc", queryid, status);
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where queryid=? and price is not null order by id", queryid);
         }
-
-        List<Quotation> list = new ArrayList<Quotation>();
-        page.getList().stream().filter(vo -> vo.getStatus() == 2).forEach(vo -> {
-            vo.setStatus(3);
-            list.add(vo);
-        });
-        Db.batchUpdate(list,list.size());
         return page;
     }
 
-    public Page<Quotation> listByBoss(String bossname, Integer status, Integer pageNo, Integer pageSize){
+    public Page<Quotation> listByBoss(Long userId, Integer type, Integer pageNo, Integer pageSize, String order){
+        Db.update("update destoon_quotation set status=1 where toid=? and status=0",userId);
         Page<Quotation> page;
-        if(status == null){
-            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? order by id desc", bossname);
+        if(type == null){
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where toid=? order by "+order, userId);
+        }else if(type == 0){
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where toid=? and status >=0 and price is null order by "+order, userId);
         }else{
-            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where touser=? and status=? order by id desc", bossname, status);
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where toid=? and status >=0 and price is not null order by "+order, userId);
         }
 
-        List<Quotation> list = new ArrayList<Quotation>();
-        page.getList().stream().filter(vo -> vo.getStatus() == 0).forEach(vo -> {
-            vo.setStatus(1);
-            list.add(vo);
-        });
-        Db.batchUpdate(list,list.size());
         return page;
     }
 
-    public Page<Quotation> listByCustomer(String custommerName, Integer status, Integer pageNo, Integer pageSize){
+    public Page<Quotation> listByCustomer(Long userId, Integer type, Integer pageNo, Integer pageSize, String order){
+        Db.update("update destoon_quotation set status=-1 where fromid=? and addtime<date_sub(now(), interval 1 hour)",userId);
+        Db.update("update destoon_quotation set status=3 where fromid=? and status=2",userId);
         Page<Quotation> page ;
-        if(status == null){
-            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? order by id desc", custommerName);
+        if(type == null){
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromid=? and status >=0 order by "+order, userId);
+        }else if(type == 0){
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromid=? and status >=0 and price is null order by "+order, userId);
         }else{
-            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromuser=? and status=? order by id desc", custommerName, status);
+            page = dao.paginate(pageNo, pageSize,"select *","from destoon_quotation where fromid=? and status >=0 and price is not null order by "+order, userId);
         }
-
-        List<Quotation> list = new ArrayList<Quotation>();
-        page.getList().stream().filter(vo -> vo.getStatus() == 2).forEach(vo -> {
-            vo.setStatus(3);
-            list.add(vo);
-        });
-        Db.batchUpdate(list,list.size());
 
         return page;
     }

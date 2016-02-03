@@ -15,17 +15,13 @@ import java.util.Map;
 public class MallController extends Controller{
     public void isStock(){
 
-//        final long userId = getParaToLong("userId");
-//        final String username = getPara("username");
         Integer catid = getParaToInt("catid");
         Integer areaid = getParaToInt("areaid", null);
+        int amount = getParaToInt("amount",1);
 
-//        Member.dao.auth(userId, username);
-
-//        renderJson("isStock", Mall.dao.isStock(catid,areaid));
 
         Map<String,Object> result = new HashMap<String,Object>();
-        result.put("isStock",Mall.dao.isStock(catid,areaid));
+        result.put("isStock",Mall.dao.isStock(catid,amount,areaid));
         r(result);
     }
     private void r(Object obj){

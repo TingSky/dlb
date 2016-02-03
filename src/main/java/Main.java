@@ -19,10 +19,6 @@ public class Main {
         return c3p0Plugin.getDataSource();
     }
 
-    public static void generate() {
-
-    }
-
     public static void main(String[] args) {
 
         // base model 所使用的包名

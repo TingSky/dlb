@@ -25,10 +25,12 @@ public class QuotationController extends Controller{
         Integer type = getParaToInt("type",null);
         Integer pageNo = getParaToInt("pageNo",1);
         Integer pageSize = getParaToInt("pageSize",10);
+        String order = getPara("order","id");
 
         Member.dao.auth(userId, username);
 
-        r(Quotation.dao.listByBoss(username, type, pageNo, pageSize));
+        Page<Quotation> page = Quotation.dao.listByBoss(userId, type, pageNo, pageSize, order);
+        r(page);
     }
 
     /**
@@ -40,12 +42,12 @@ public class QuotationController extends Controller{
         Integer type = getParaToInt("type",null);
         Integer pageNo = getParaToInt("pageNo",1);
         Integer pageSize = getParaToInt("pageSize",10);
+        String order = getPara("order","id");
 
         Member.dao.auth(userId, username);
 
-        Page<Quotation> page = Quotation.dao.listByCustomer(username, type, pageNo, pageSize);
+        Page<Quotation> page = Quotation.dao.listByCustomer(userId, type, pageNo, pageSize, order);
         r(page);
-
     }
 
     public void unread(){

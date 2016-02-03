@@ -2,6 +2,7 @@ package com.ting.controller;
 
 import com.jfinal.core.Controller;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.ting.domain.Mall;
 import com.ting.domain.Member;
@@ -30,17 +31,16 @@ public class QueryPriceController extends Controller{
         final long userId = getParaToLong("userId");
         final String username = getPara("username");
         final boolean tax = getParaToBoolean("tax");
-//        String ip = getRequest().getRemoteAddr();
+        final int a = getParaToInt("amount",1);
 
         Member.dao.auth(userId, username);
 
-        final List<Mall> list = Mall.dao.getStockGoodsByCatid(catid);
+        final List<Mall> list = Mall.dao.getStockGoodsByCatid(catid,a);
 
         QueryPrice q = QueryPrice.dao.getLatestQuery(catid, username);
         if(q != null){
             long l = new Date().getTime() - 10*60*1000;
             if(q.getAddtime().after(new Date(l))){
-//                renderJson("amount",-1);
                 Map<String,Object> result = new HashMap<String,Object>();
                 result.put("amount",-1);
                 r(result);
@@ -50,7 +50,6 @@ public class QueryPriceController extends Controller{
 
         if(list != null){
             final long id = QueryPrice.dao.insert(catid, username);
-//            renderJson("amount",(list.size()-1) + "");
 
             Map<String,Object> result = new HashMap<String,Object>();
             result.put("amount",list.size()-1);
@@ -67,6 +66,7 @@ public class QueryPriceController extends Controller{
                     vo.setFromid(userId);
                     vo.setFromuser(username);
                     vo.setItemid(m.getItemid().longValue());
+                    vo.setAmount(a);
                     vo.setPrice(null);
                     vo.setQueryid(id);
                     vo.setStatus(0);
@@ -99,7 +99,7 @@ public class QueryPriceController extends Controller{
         if(vo == null){
             r(0);
         }else{
-            Page<Quotation> page = Quotation.dao.listQuotation(vo.getId(), type, pageNo, pageSize);
+            Page<Quotation> page = Quotation.dao.listQuotation(userId, vo.getId(), type, pageNo, pageSize);
             r(page);
         }
     }
@@ -120,7 +120,20 @@ public class QueryPriceController extends Controller{
             Map<String, Object> result = new HashMap<String, Object>();
             result.put("isUpdate", -1);
             r(result);
+            e.printStackTrace();
         }
+    }
+
+    public void expire(){
+        long userId = getParaToLong("userId");
+        String username = getPara("username");
+        long id = getParaToLong("queryid");
+
+        Member.dao.auth(userId, username);
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("isExpired", Db.update("update destoon_quotation set status=-1 where queryid="+ id +" and fromid="+userId)>0?1:0);
+        r(result);
     }
 
     private void r(Object obj){

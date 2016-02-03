@@ -81,6 +81,14 @@ public abstract class BaseQuotation<M extends BaseQuotation<M>> extends Model<M>
 		return get("catid");
 	}
 
+	public void setAmount(java.lang.Integer amount) {
+		set("amount", amount);
+	}
+
+	public java.lang.Integer getAmount() {
+		return get("amount");
+	}
+
 	public void setPrice(java.math.BigDecimal price) {
 		set("price", price);
 	}
