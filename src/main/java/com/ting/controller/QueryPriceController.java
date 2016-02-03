@@ -37,6 +37,7 @@ public class QueryPriceController extends Controller{
 
         final List<Mall> list = Mall.dao.getStockGoodsByCatid(catid,a);
 
+        //10分钟内不允许第二次询价
         QueryPrice q = QueryPrice.dao.getLatestQuery(catid, username);
         if(q != null){
             long l = new Date().getTime() - 10*60*1000;
@@ -57,6 +58,7 @@ public class QueryPriceController extends Controller{
 
             Date now = new Date();
 
+            //发起异步线程
             executor.execute(() -> {
                 for (Mall m : list){
                     Quotation vo = new Quotation();
@@ -91,6 +93,7 @@ public class QueryPriceController extends Controller{
         Integer type = getParaToInt("type");
         Integer pageNo = getParaToInt("pageNo",1);
         Integer pageSize = getParaToInt("pageSize",10);
+        Integer isDesc = getParaToInt("isDesc", 0);
 
 
         Member.dao.auth(userId, username);
@@ -99,7 +102,7 @@ public class QueryPriceController extends Controller{
         if(vo == null){
             r(0);
         }else{
-            Page<Quotation> page = Quotation.dao.listQuotation(userId, vo.getId(), type, pageNo, pageSize);
+            Page<Quotation> page = Quotation.dao.listQuotation(userId, vo.getId(), type, pageNo, pageSize, isDesc);
             r(page);
         }
     }
