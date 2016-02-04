@@ -130,12 +130,13 @@ public class QueryPriceController extends Controller{
     public void expire(){
         long userId = getParaToLong("userId");
         String username = getPara("username");
-        long id = getParaToLong("queryid");
+        long toid = getParaToLong("toid");
+        long catid = getParaToLong("catid");
 
         Member.dao.auth(userId, username);
 
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("isExpired", Db.update("update destoon_quotation set status=-1 where queryid="+ id +" and fromid="+userId)>0?1:0);
+        result.put("isExpired", Db.update("update destoon_quotation set status=-1 where fromid="+ userId+" and toid="+toid+" and  catid="+catid )>0?1:0);
         r(result);
     }
 
